@@ -45,7 +45,7 @@ def get_comments(post, num = 10):
 def main():
     """Main function"""
     current = get_post()
-    comments = get_comments(current, 3)
+    comments = get_comments(current, 10)
     for i, comment in enumerate(comments, 1):
         sentiment, confidence = analyze_sentiment(comment)
         print(f"Comment {i}: \n{comment}")
