@@ -3,10 +3,10 @@
 # using PRAW and prepares them for sentiment analysis using an LLM.
 # Author: Obeida Iqbal
 
-from transformers import pipeline
+from transformers import pipeline, AutoConfig
 import praw
 
-sentiment_model = pipeline("sentiment-analysis")
+sentiment_model = pipeline("sentiment-analysis", model = "akshataupadhye/finetuning-sentiment-model-reddit-data")
 
 
 def analyze_sentiment(comment):
@@ -42,14 +42,35 @@ def get_comments(post, num = 10):
         comments.append(comment.body)
     return comments
 
+def get_sentiment(sentiment):
+    if sentiment == 'LABEL_0':
+        return "negative"
+    elif sentiment == 'LABEL_1':
+        return "neutral"
+    elif sentiment == 'LABEL_2':
+        return "positive"
+
+def analyze_comments(comments, results):
+    for i, comment in enumerate(comments, 1):
+        sentiment, confidence = analyze_sentiment(comment)
+        # print(f"Comment {i}: \n{comment}")
+        # print(f"Sentiment: {get_sentiment(sentiment)} (Confidence: {confidence})\n")
+        results[get_sentiment(sentiment)] += 1
+
+def print_results(results, comment_count):
+    print("Sentiment")
+    for sentiment in results:
+        print(f"{sentiment}: {(results[sentiment] / comment_count) * 100}%")
+
+
 def main():
     """Main function"""
     current = get_post()
-    comments = get_comments(current, 10)
-    for i, comment in enumerate(comments, 1):
-        sentiment, confidence = analyze_sentiment(comment)
-        print(f"Comment {i}: \n{comment}")
-        print(f"Sentiment: {sentiment} (Confidence: {confidence})\n")
+    comment_count = 200
+    comments = get_comments(current, comment_count)
+    results = {"positive": 0, "neutral": 0, "negative": 0}
+    analyze_comments(comments, results)
+    print_results(results, comment_count)
 
 if __name__ == "__main__":
     main()
