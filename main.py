@@ -3,8 +3,16 @@
 # using PRAW and prepares them for sentiment analysis using an LLM.
 # Author: Obeida Iqbal
 
+from transformers import pipeline
 import praw
 
+sentiment_model = pipeline("sentiment-analysis")
+
+
+def analyze_sentiment(comment):
+    """Uses a Hugging Face model to analyze sentiment of a comment"""
+    result = sentiment_model(comment)[0] 
+    return result["label"], round(result["score"], 2)
 
 def read_file(filename):
     """Returns the contents of filename"""
@@ -23,7 +31,7 @@ def get_post():
     for post in hot_posts:
         if "Discussion" in post.title:
             return post
-    return 0
+    return None
 
 def get_comments(post, num = 10):
     """Prints comments from the given post"""
@@ -38,7 +46,10 @@ def main():
     """Main function"""
     current = get_post()
     comments = get_comments(current, 3)
-    print(comments)
+    for i, comment in enumerate(comments, 1):
+        sentiment, confidence = analyze_sentiment(comment)
+        print(f"Comment {i}: \n{comment}")
+        print(f"Sentiment: {sentiment} (Confidence: {confidence})\n")
 
 if __name__ == "__main__":
     main()
