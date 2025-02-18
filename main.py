@@ -43,6 +43,7 @@ def get_comments(post, num = 10):
     return comments
 
 def get_sentiment(sentiment):
+    """Returns what each label is equivalent to"""
     if sentiment == 'LABEL_0':
         return "negative"
     elif sentiment == 'LABEL_1':
@@ -51,6 +52,7 @@ def get_sentiment(sentiment):
         return "positive"
 
 def analyze_comments(comments, results):
+    """Analyzes the sentiment of each comment"""
     for i, comment in enumerate(comments, 1):
         sentiment, confidence = analyze_sentiment(comment)
         # print(f"Comment {i}: \n{comment}")
@@ -58,6 +60,7 @@ def analyze_comments(comments, results):
         results[get_sentiment(sentiment)] += 1
 
 def print_results(results, comment_count):
+    """Prints the collected results of the analysis"""
     print("Sentiment")
     for sentiment in results:
         print(f"{sentiment}: {(results[sentiment] / comment_count) * 100}%")
