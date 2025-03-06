@@ -6,6 +6,5 @@ To Run the main.py file locally:
   ```sh
   pip install -r requirements.txt
   source venv/bin/Activate
-  cd backend
   python3 main.py
   ```
