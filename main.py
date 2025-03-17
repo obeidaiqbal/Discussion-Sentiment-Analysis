@@ -8,6 +8,7 @@ import praw
 import json
 
 sentiment_model = pipeline("sentiment-analysis", model = "akshataupadhye/finetuning-sentiment-model-reddit-data")
+totalConfidence = 0
 
 
 def analyze_sentiment(comment):
@@ -54,10 +55,12 @@ def get_sentiment(sentiment):
 
 def analyze_comments(comments, results):
     """Analyzes the sentiment of each comment"""
+    global totalConfidence
     for i, comment in enumerate(comments, 1):
         sentiment, confidence = analyze_sentiment(comment)
         # print(f"Comment {i}: \n{comment}")
         # print(f"Sentiment: {get_sentiment(sentiment)} (Confidence: {confidence})\n")
+        totalConfidence += confidence
         results[get_sentiment(sentiment)] += 1
 
 def print_results(results, comment_count):
@@ -65,6 +68,7 @@ def print_results(results, comment_count):
     print("Sentiment")
     for sentiment in results:
         print(f"{sentiment}: {(results[sentiment] / comment_count) * 100}%")
+    print(f"Confidence: {(totalConfidence / comment_count) * 100}%")
 
 def get_training_data(count):
     """Gets the top posts from the subreddit to be used for training"""
